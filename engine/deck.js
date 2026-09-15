@@ -30,6 +30,8 @@
     matchMedia('(pointer: coarse)').matches); // phones & tablets; a narrow desktop window keeps full screenshots
   document.documentElement.classList.toggle('lite', LITE);
   const PAGES = cfg.pages || {};
+  // world factor: in lite mode an image page is laid out at (page px × liteScale) so its CSS size matches the lite image
+  const WF = key => (LITE && PAGES[key].kind === 'image' && PAGES[key].srcLite ? (PAGES[key].liteScale || 0.5) : 1);
   const CATS = cfg.categories || [];
   const REGIONS = cfg.regions || {};
 
@@ -111,22 +113,23 @@
   const BLANK = 'data:image/gif;base64,R0lGODlhAQABAAAAACw='; // 1×1 placeholder, releases the decoded screenshot
   const winsHost = $('#windows');
   for (const [key, page] of Object.entries(PAGES)) {
+    const f = WF(key), q = v => +(v * f).toFixed(2);
     let body;
     if (page.kind === 'frames') {
       body = Object.entries(page.frames).map(([f, fr]) =>
         `<iframe data-f="${f}"${f === page.defaultFrame ? ' class="on"' : ''} data-src="${esc(fr.src)}" src="about:blank" width="${page.w}" height="${page.h}" scrolling="no" tabindex="-1" title="${esc(page.label + ' ' + fr.label)}"></iframe>`).join('');
     } else {
       const src = LITE && page.srcLite ? page.srcLite : page.src;
-      body = `<img data-src="${esc(src)}" src="${BLANK}" width="${page.w}" height="${page.h}" alt="${esc(page.label)} 整頁截圖" decoding="async">`;
+      body = `<img data-src="${esc(src)}" src="${BLANK}" width="${q(page.w)}" height="${q(page.h)}" style="width:${q(page.w)}px;height:${q(page.h)}px" alt="${esc(page.label)} 整頁截圖" decoding="async">`;
     }
     const bands = page.cats ? `<div class="bands">${CATS.flatMap(c => (page.cats[c.key] || []).map(([y, h], i) =>
-      `<div class="band" data-c="${c.key}" style="top:${y}px;height:${h}px;--c:${c.color};--fill:${c.color}24">${i === 0 ? `<span>${c.name}</span>` : ''}</div>`)).join('')}</div>` : '';
+      `<div class="band" data-c="${c.key}" style="top:${q(y)}px;height:${q(h)}px;--c:${c.color};--fill:${c.color}24">${i === 0 ? `<span>${c.name}</span>` : ''}</div>`)).join('')}</div>` : '';
     const marks = Object.entries(page.marks || {}).map(([g, list]) => `<div class="marks" data-g="${g}">${list.map(([x, y, w, h], i) =>
-      `<div class="mark" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;transition-delay:${0.9 + i * 0.25}s"><b>${i + 1}</b></div>`).join('')}</div>`).join('');
+      `<div class="mark" style="left:${q(x)}px;top:${q(y)}px;width:${q(w)}px;height:${q(h)}px;transition-delay:${0.9 + i * 0.25}s"><b>${i + 1}</b></div>`).join('')}</div>`).join('');
     const tag = page.kind === 'frames' ? `${page.label} · ${page.frames[page.defaultFrame].label}` : page.label;
     winsHost.insertAdjacentHTML('beforeend',
       `<div class="win hidden" id="win-${key}"><div class="chrome"><i></i><i></i><i></i><span>${esc(page.url || '')}</span><b>${esc(tag)}</b></div>` +
-      `<div class="view" data-none="${esc(cfg.meta?.noneLabel || '無此區塊')}"><div class="world" style="width:${page.w}px;height:${page.h}px">${body}${bands}${marks}<div class="dimset off"><i></i><i></i><i></i><i></i></div><div class="spot off"></div></div></div></div>`);
+      `<div class="view" data-none="${esc(cfg.meta?.noneLabel || '無此區塊')}"><div class="world" style="width:${q(page.w)}px;height:${q(page.h)}px">${body}${bands}${marks}<div class="dimset off"><i></i><i></i><i></i><i></i></div><div class="spot off"></div></div></div></div>`);
   }
   const wins = Object.fromEntries(Object.keys(PAGES).map(k => [k, $('#win-' + k)]));
 
@@ -162,8 +165,9 @@
   // ---------- spotlight ----------
   // Four rectangles around the spot. They extend DIM_MARGIN past the page so window margins beside a narrow page dim too.
   const DIM_MARGIN = 6000;
-  function placeSpot(spot, dims, [x, y, w, h], page) {
-    const M = DIM_MARGIN, W = page.w, H = page.h, o = 1; // 1px overlap hides seams
+  function placeSpot(spot, dims, rect, page, f = 1) {
+    const [x, y, w, h] = rect.map(v => v * f);
+    const M = DIM_MARGIN * f, W = page.w * f, H = page.h * f, o = 1; // 1px overlap hides seams
     Object.assign(spot.style, { left: x + 'px', top: y + 'px', width: w + 'px', height: h + 'px' });
     const rects = [
       [-M, -M, W + 2 * M, y + M + o],                 // above
@@ -241,10 +245,11 @@
       el.classList.toggle('none', !!c.align && !PAGES[key].cats?.[c.align]);
       const t = place(key, c); lastT[key] = t;
       const world = el.querySelector('.world');
-      world.style.transform = `translate(${t.tx}px,${t.ty}px) scale(${t.s})`;
-      world.style.setProperty('--inv', (1 / t.s).toFixed(3));
+      const f = WF(key);
+      world.style.transform = `translate(${t.tx}px,${t.ty}px) scale(${t.s / f})`;
+      world.style.setProperty('--inv', (f / t.s).toFixed(3));
       const spot = el.querySelector('.spot'), dims = el.querySelector('.dimset');
-      if (c.spot) { placeSpot(spot, dims, c.spot, PAGES[key]); }
+      if (c.spot) { placeSpot(spot, dims, c.spot, PAGES[key], WF(key)); }
       spot.classList.toggle('off', !c.spot);
       dims.classList.toggle('off', !c.spot);
       el.querySelectorAll('.marks').forEach(m => m.classList.toggle('on', m.dataset.g === c.marks));

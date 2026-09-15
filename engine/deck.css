@@ -58,8 +58,11 @@ html,body{margin:0;height:100%;background:#f3f4f6;color:var(--ink);font-family:"
 .win.none .view::after{content:attr(data-none);position:absolute;inset:0;display:grid;place-items:center;background:rgba(255,255,255,.82);color:var(--muted);font-size:34px;font-weight:700;letter-spacing:4px}
 .world{position:absolute;left:0;top:0;transform-origin:0 0;transition:transform var(--dur) var(--ease);will-change:transform;--inv:1}
 .world img,.world iframe{position:absolute;left:0;top:0;display:block;border:0;pointer-events:none}
-/* lite mode (phones): no permanent GPU layers for the huge page worlds */
-.lite .world{will-change:auto}
+/* lite mode (phones): no permanent GPU layers, and no animation inside the page worlds —
+   animating big screenshots makes mobile browsers allocate huge compositing layers */
+.lite .world{will-change:auto;transition:none}
+.lite .spot,.lite .dimset,.lite .dimset i,.lite .bands,.lite .band{transition:none}
+.lite .win{box-shadow:0 8px 24px rgba(17,24,39,.12)}
 .world iframe{opacity:0;transition:opacity .5s}
 .world iframe.on{opacity:1}
 
