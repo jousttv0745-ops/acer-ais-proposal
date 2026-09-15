@@ -36,7 +36,7 @@ window.DECK = {
 
   pages: {
     samsung: {
-      kind: 'image', src: 'content/screenshot/samsung_ai_html.png', w: 1920, h: 11760,
+      kind: 'image', src: 'content/screenshot/samsung_ai_html.png', srcLite: 'content/screenshot/samsung_ai_html.lite.png', w: 1920, h: 11760,
       label: 'Samsung Galaxy AI', url: 'samsung.com/us/galaxy-ai',
       cats: { brand: [[232, 1508]], feature: [[1740, 2220]], security: [[4060, 960]], hardware: [[5040, 640], [5760, 1020]], seo: [[6800, 1650]], frame: [[0, 232], [8450, 3310]] },
       bands: [['Branding', 232, 1508], ['Scenario', 1740, 1250], ['Core experience', 3040, 1980], ['Selling', 5040, 1740], ['FAQ', 6800, 1650], ['Footnotes · Footer', 8450, 3310]],
@@ -48,12 +48,12 @@ window.DECK = {
       },
     },
     lenovo: {
-      kind: 'image', src: 'content/lenovo_960.png', w: 1920, h: 11053,
+      kind: 'image', src: 'content/lenovo_960.png', srcLite: 'content/lenovo_480.lite.png', w: 1920, h: 11053,
       label: 'Lenovo AI Apps', url: 'lenovo.com/ai-applications',
       cats: { brand: [[420, 756]], feature: [[1176, 6904]], hardware: [[8140, 1280]], frame: [[0, 420], [9420, 1633]] },
     },
     asus: {
-      kind: 'image', src: 'content/asus_960.png', w: 1920, h: 15873,
+      kind: 'image', src: 'content/asus_960.png', srcLite: 'content/asus_480.lite.png', w: 1920, h: 15873,
       label: 'ASUS StoryCube', url: 'asus.com/proart/storycube',
       cats: { brand: [[160, 1690]], feature: [[1850, 12630]], frame: [[0, 160], [14480, 1393]] },
     },

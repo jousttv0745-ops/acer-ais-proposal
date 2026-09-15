@@ -24,6 +24,11 @@
   if (!cfg) fail('找不到 window.DECK，請確認 deck.config.js 有在 engine/deck.js 之前載入。');
 
   const L = { ...DEFAULT_LAYOUT, ...(cfg.layout || {}) };
+  // lite mode: phones/tablets (or ?lite=1) get half-size screenshots and no permanent GPU layers; ?lite=0 forces full
+  const liteParam = new URLSearchParams(location.search).get('lite');
+  const LITE = liteParam === '1' || (liteParam !== '0' && cfg.lite !== false &&
+    matchMedia('(pointer: coarse)').matches); // phones & tablets; a narrow desktop window keeps full screenshots
+  document.documentElement.classList.toggle('lite', LITE);
   const PAGES = cfg.pages || {};
   const CATS = cfg.categories || [];
   const REGIONS = cfg.regions || {};
@@ -103,6 +108,7 @@
   // ---------- build DOM ----------
   const stage = $('#stage');
   const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+  const BLANK = 'data:image/gif;base64,R0lGODlhAQABAAAAACw='; // 1×1 placeholder, releases the decoded screenshot
   const winsHost = $('#windows');
   for (const [key, page] of Object.entries(PAGES)) {
     let body;
@@ -110,7 +116,8 @@
       body = Object.entries(page.frames).map(([f, fr]) =>
         `<iframe data-f="${f}"${f === page.defaultFrame ? ' class="on"' : ''} data-src="${esc(fr.src)}" src="about:blank" width="${page.w}" height="${page.h}" scrolling="no" tabindex="-1" title="${esc(page.label + ' ' + fr.label)}"></iframe>`).join('');
     } else {
-      body = `<img src="${esc(page.src)}" width="${page.w}" height="${page.h}" alt="${esc(page.label)} 整頁截圖" decoding="async">`;
+      const src = LITE && page.srcLite ? page.srcLite : page.src;
+      body = `<img data-src="${esc(src)}" src="${BLANK}" width="${page.w}" height="${page.h}" alt="${esc(page.label)} 整頁截圖" decoding="async">`;
     }
     const bands = page.cats ? `<div class="bands">${CATS.flatMap(c => (page.cats[c.key] || []).map(([y, h], i) =>
       `<div class="band" data-c="${c.key}" style="top:${y}px;height:${h}px;--c:${c.color};--fill:${c.color}24">${i === 0 ? `<span>${c.name}</span>` : ''}</div>`)).join('')}</div>` : '';
@@ -167,23 +174,23 @@
     [...dims.children].forEach((el, n) => { const [l, t, rw, rh] = rects[n]; Object.assign(el.style, { left: l + 'px', top: t + 'px', width: Math.max(0, rw) + 'px', height: Math.max(0, rh) + 'px' }); });
   }
 
-  // ---------- lazy iframe pages ----------
-  // Only frames used by the previous, current and next step stay loaded; others are unloaded to free memory.
-  const framesFor = s => Object.entries(s?.wins || {}).flatMap(([k, c]) =>
-    PAGES[k].kind === 'frames' ? (c.cycle || [c.frame || PAGES[k].defaultFrame]).map(f => k + '/' + f) : []);
-  function syncFrames(i, my) {
-    const need = new Set([...framesFor(STEPS[i - 1]), ...framesFor(STEPS[i]), ...framesFor(STEPS[i + 1])]);
-    const frames = [...document.querySelectorAll('.world iframe')];
-    for (const fr of frames) {
-      const id = fr.closest('.win').id.slice(4) + '/' + fr.dataset.f;
-      if (need.has(id) && fr.dataset.loaded !== '1') { fr.src = fr.dataset.src; fr.dataset.loaded = '1'; }
+  // ---------- lazy page media ----------
+  // Screenshots and iframe pages used by the previous, current and next step stay loaded; the rest are released.
+  const mediaFor = s => Object.entries(s?.wins || {}).flatMap(([k, c]) =>
+    PAGES[k].kind === 'frames' ? (c.cycle || [c.frame || PAGES[k].defaultFrame]).map(f => k + '/' + f) : [k + '/img']);
+  const mediaId = el => el.closest('.win').id.slice(4) + '/' + (el.tagName === 'IMG' ? 'img' : el.dataset.f);
+  const mediaNeeded = i => new Set([...mediaFor(STEPS[i - 1]), ...mediaFor(STEPS[i]), ...mediaFor(STEPS[i + 1])]);
+  function syncMedia(i) {
+    const need = mediaNeeded(i);
+    for (const el of document.querySelectorAll('.world iframe, .world img')) {
+      if (need.has(mediaId(el)) && el.dataset.loaded !== '1') { el.src = el.dataset.src; el.dataset.loaded = '1'; }
     }
-    // unload after the window has faded out, unless a newer step needs it again
+    // release after the window has faded out, judged against whichever step is current by then,
+    // so fast clicking never cancels the clean-up
     setTimeout(() => {
-      if (my !== token) return;
-      for (const fr of frames) {
-        const id = fr.closest('.win').id.slice(4) + '/' + fr.dataset.f;
-        if (!need.has(id) && fr.dataset.loaded === '1') { fr.src = 'about:blank'; fr.dataset.loaded = ''; }
+      const keep = mediaNeeded(current);
+      for (const el of document.querySelectorAll('.world iframe, .world img')) {
+        if (!keep.has(mediaId(el)) && el.dataset.loaded === '1') { el.src = el.tagName === 'IMG' ? BLANK : 'about:blank'; el.dataset.loaded = ''; }
       }
     }, 1200);
   }
@@ -205,7 +212,7 @@
     document.querySelectorAll('#bar i').forEach((el, n) => el.classList.toggle('on', n <= i));
     document.querySelectorAll('#chapters button').forEach(b => b.classList.toggle('on', +b.dataset.ch === step.chapter));
     clearInterval(cycleTimer);
-    syncFrames(i, my);
+    syncMedia(i);
 
     const cover = $('#cover'), intro = $('#intro');
     if (step.cover) {
@@ -321,10 +328,15 @@
   }
 
   function fitStage() {
-    const k = Math.min(innerWidth / 1920, innerHeight / 1080);
+    const vv = window.visualViewport;
+    const w = vv ? vv.width : innerWidth, h = vv ? vv.height : innerHeight;
+    const k = Math.min(w / 1920, h / 1080);
     stage.style.transform = `translate(-50%,-50%) scale(${k})`;
   }
   addEventListener('resize', fitStage);
+  addEventListener('orientationchange', () => setTimeout(fitStage, 200));
+  window.visualViewport?.addEventListener('resize', fitStage);
+  addEventListener('load', fitStage);
   addEventListener('keydown', e => {
     if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); go(current + 1); }
     else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); go(current - 1); }
@@ -334,7 +346,7 @@
   });
   stage.addEventListener('click', e => { if (!e.target.closest('.chapters')) go(current + 1); });
 
-  window.Deck = { go, steps: STEPS, pages: PAGES, helpers: d, get current() { return current; } };
+  window.Deck = { go, steps: STEPS, pages: PAGES, helpers: d, lite: LITE, get current() { return current; } };
   fitStage();
   go((parseInt(location.hash.slice(1), 10) || 1) - 1);
 })();

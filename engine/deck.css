@@ -10,7 +10,7 @@ html,body{margin:0;height:100%;background:#f3f4f6;color:var(--ink);font-family:"
 .en{font-family:Montserrat,"Noto Sans TC",sans-serif}
 
 /* 1920×1080 stage, letterboxed to any screen */
-.stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:50% 50%;overflow:hidden;background:var(--bg)}
+.stage{position:fixed;left:50%;top:50%;width:1920px;height:1080px;transform-origin:50% 50%;overflow:hidden;background:var(--bg)}
 
 /* top bar */
 .top{position:absolute;left:80px;right:80px;top:34px;display:flex;align-items:center;gap:32px;z-index:30;font-size:18px}
@@ -58,6 +58,8 @@ html,body{margin:0;height:100%;background:#f3f4f6;color:var(--ink);font-family:"
 .win.none .view::after{content:attr(data-none);position:absolute;inset:0;display:grid;place-items:center;background:rgba(255,255,255,.82);color:var(--muted);font-size:34px;font-weight:700;letter-spacing:4px}
 .world{position:absolute;left:0;top:0;transform-origin:0 0;transition:transform var(--dur) var(--ease);will-change:transform;--inv:1}
 .world img,.world iframe{position:absolute;left:0;top:0;display:block;border:0;pointer-events:none}
+/* lite mode (phones): no permanent GPU layers for the huge page worlds */
+.lite .world{will-change:auto}
 .world iframe{opacity:0;transition:opacity .5s}
 .world iframe.on{opacity:1}
 
