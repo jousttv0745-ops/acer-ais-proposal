@@ -29,9 +29,14 @@
   const LITE = liteParam === '1' || (liteParam !== '0' && cfg.lite !== false &&
     matchMedia('(pointer: coarse)').matches); // phones & tablets; a narrow desktop window keeps full screenshots
   document.documentElement.classList.toggle('lite', LITE);
-  const PAGES = cfg.pages || {};
+  const PAGES = { ...(cfg.pages || {}) };
+  // page-length thumbnails: a lite-screenshot copy of each image page, always laid out at its lite size
+  const LEN_SUFFIX = '__len';
+  for (const [k, p] of Object.entries(cfg.pages || {})) {
+    if (p.kind === 'image' && p.srcLite) PAGES[k + LEN_SUFFIX] = { ...p, src: p.srcLite, forceLite: true };
+  }
   // world factor: in lite mode an image page is laid out at (page px × liteScale) so its CSS size matches the lite image
-  const WF = key => (LITE && PAGES[key].kind === 'image' && PAGES[key].srcLite ? (PAGES[key].liteScale || 0.5) : 1);
+  const WF = key => (PAGES[key].kind === 'image' && PAGES[key].srcLite && (LITE || PAGES[key].forceLite) ? (PAGES[key].liteScale || 0.5) : 1);
   const CATS = cfg.categories || [];
   const REGIONS = cfg.regions || {};
 
@@ -78,8 +83,9 @@
     categories: (chapter, keys) => CATS.map(c => d.category(chapter, keys, c.key)),
     /** benchmark: whole pages at one common scale, with a metric under each */
     lengths: (chapter, keys, { metric, label }) => {
+      keys = keys.map(k => (PAGES[k + LEN_SUFFIX] ? k + LEN_SUFFIX : k));
       const rects = lengthRects(keys), scale = (L.lengthHeight - CHROME) / Math.max(...keys.map(k => PAGES[k].h));
-      return { chapter, chips: { mode: 'length', metric, label },
+      return { chapter, cut: true, chips: { mode: 'length', metric, label },
         wins: Object.fromEntries(keys.map(k => [k, { rect: rects[k], scale, bands: 'all', slim: true }])) };
     },
 
@@ -210,7 +216,10 @@
   function go(i) {
     i = Math.max(0, Math.min(STEPS.length - 1, i));
     if (i === current) return;
+    const prevStep = STEPS[current];
     current = i; const step = STEPS[i], my = ++token;
+    const cut = !!(step.cut || prevStep?.cut);
+    stage.classList.toggle('cut', cut);
     history.replaceState(null, '', '#' + (i + 1));
     $('#count').textContent = `${i + 1} / ${STEPS.length}`;
     document.querySelectorAll('#bar i').forEach((el, n) => el.classList.toggle('on', n <= i));
@@ -240,6 +249,7 @@
       }
       const [x, y, w, h] = c.rect;
       Object.assign(el.style, { left: x + 'px', top: y + 'px', width: w + 'px', height: h + 'px' });
+      if (cut) el.classList.add('cutting');
       el.classList.remove('hidden');
       el.classList.toggle('slim', !!c.slim);
       el.classList.toggle('none', !!c.align && !PAGES[key].cats?.[c.align]);
@@ -263,6 +273,10 @@
         else setFrame(key, c.frame || PAGES[key].defaultFrame);
       }
       geo[key] = { rect: c.rect, t };
+    }
+    if (cut) {
+      void stage.offsetWidth; // commit the new geometry before fading in
+      setTimeout(() => { if (my === token) document.querySelectorAll('.win.cutting').forEach(w => w.classList.remove('cutting')); }, 30);
     }
 
     // overlays hide immediately, reveal after the camera lands
@@ -329,7 +343,7 @@
         if (step.catHead) cathead.classList.add('show');
         if (step.chips) chips.classList.add('show');
       }, 40);
-    }, reduce ? 0 : 950);
+    }, reduce || cut ? 0 : 950);
   }
 
   function fitStage() {
