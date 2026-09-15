@@ -48,9 +48,8 @@ html,body{margin:0;height:100%;background:#f3f4f6;color:var(--ink);font-family:"
   box-shadow:0 30px 80px rgba(17,24,39,.14),0 2px 6px rgba(17,24,39,.06);z-index:8;
   transition:left var(--dur) var(--ease),top var(--dur) var(--ease),width var(--dur) var(--ease),height var(--dur) var(--ease),opacity .6s}
 .win.hidden{opacity:0;pointer-events:none}
-/* cut: jump to the new geometry and fade in, no per-frame resize of huge screenshots */
-.stage.cut .win{transition:opacity .45s}
-.stage.cut .win.cutting{opacity:0;transition:none}
+/* cut: switch windows instantly — no per-frame resize of huge screenshots, and no fade that waits on their first paint */
+.stage.cut .win{transition:none}
 .stage.cut .world,.stage.cut .bands,.stage.cut .band,.stage.cut .spot,.stage.cut .dimset,.stage.cut .dimset i,.stage.cut .chip,.stage.cut .label{transition:none}
 .chrome{height:40px;display:flex;align-items:center;gap:8px;padding:0 14px;background:#f3f4f6;border-bottom:1px solid var(--line);white-space:nowrap;overflow:hidden}
 .chrome i{width:11px;height:11px;border-radius:50%;background:#d1d5db;flex:none}

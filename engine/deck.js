@@ -193,7 +193,11 @@
   function syncMedia(i) {
     const need = mediaNeeded(i);
     for (const el of document.querySelectorAll('.world iframe, .world img')) {
-      if (need.has(mediaId(el)) && el.dataset.loaded !== '1') { el.src = el.dataset.src; el.dataset.loaded = '1'; }
+      if (need.has(mediaId(el)) && el.dataset.loaded !== '1') {
+        el.src = el.dataset.src; el.dataset.loaded = '1';
+        // decode off the main thread now, so the step that shows it doesn't stall on its first paint
+        if (el.tagName === 'IMG' && el.decode) el.decode().catch(() => {});
+      }
     }
     // release after the window has faded out, judged against whichever step is current by then,
     // so fast clicking never cancels the clean-up
@@ -249,7 +253,6 @@
       }
       const [x, y, w, h] = c.rect;
       Object.assign(el.style, { left: x + 'px', top: y + 'px', width: w + 'px', height: h + 'px' });
-      if (cut) el.classList.add('cutting');
       el.classList.remove('hidden');
       el.classList.toggle('slim', !!c.slim);
       el.classList.toggle('none', !!c.align && !PAGES[key].cats?.[c.align]);
@@ -273,10 +276,6 @@
         else setFrame(key, c.frame || PAGES[key].defaultFrame);
       }
       geo[key] = { rect: c.rect, t };
-    }
-    if (cut) {
-      void stage.offsetWidth; // commit the new geometry before fading in
-      setTimeout(() => { if (my === token) document.querySelectorAll('.win.cutting').forEach(w => w.classList.remove('cutting')); }, 30);
     }
 
     // overlays hide immediately, reveal after the camera lands
