@@ -85,7 +85,7 @@
     lengths: (chapter, keys, { metric, label }) => {
       keys = keys.map(k => (PAGES[k + LEN_SUFFIX] ? k + LEN_SUFFIX : k));
       const rects = lengthRects(keys), scale = (L.lengthHeight - CHROME) / Math.max(...keys.map(k => PAGES[k].h));
-      return { chapter, cut: true, chips: { mode: 'length', metric, label },
+      return { chapter, chips: { mode: 'length', metric, label },
         wins: Object.fromEntries(keys.map(k => [k, { rect: rects[k], scale, bands: 'all', slim: true }])) };
     },
 
@@ -222,8 +222,6 @@
     if (i === current) return;
     const prevStep = STEPS[current];
     current = i; const step = STEPS[i], my = ++token;
-    const cut = !!(step.cut || prevStep?.cut);
-    stage.classList.toggle('cut', cut);
     history.replaceState(null, '', '#' + (i + 1));
     $('#count').textContent = `${i + 1} / ${STEPS.length}`;
     document.querySelectorAll('#bar i').forEach((el, n) => el.classList.toggle('on', n <= i));
@@ -241,16 +239,25 @@
     if (step.intro) intro.innerHTML = `<div class="num">${step.intro.num}</div><h1>${step.intro.title}</h1><h2>${step.intro.sub || ''}</h2><p>${step.intro.p || ''}</p>`;
     intro.classList.toggle('off', !step.intro);
 
-    const geo = {};
-    for (const key of Object.keys(PAGES)) {
-      const el = wins[key], c = (step.wins || {})[key];
-      if (!c) {
-        el.classList.add('hidden');
-        el.querySelector('.spot').classList.add('off');
-        el.querySelector('.dimset').classList.add('off');
-        el.querySelectorAll('.marks').forEach(m => m.classList.remove('on'));
-        continue;
+    // proxy morph between a big window and its lite "__len" thumbnail (page-length step)
+    const prevWins = prevStep?.wins || {}, stepWins = step.wins || {};
+    const morphIn = {};  // thumbnail key -> big key: thumbnail starts where the big window is
+    const morphOut = {}; // big key -> thumbnail key: thumbnail animates to the big window's target, then hands over
+    for (const k of Object.keys(stepWins)) {
+      if (k.endsWith(LEN_SUFFIX)) {
+        const base = k.slice(0, -LEN_SUFFIX.length);
+        if (prevWins[base] && !prevWins[k] && lastT[base]) morphIn[k] = base;
+      } else if (PAGES[k + LEN_SUFFIX] && prevWins[k + LEN_SUFFIX] && !stepWins[k + LEN_SUFFIX]) {
+        morphOut[k] = k + LEN_SUFFIX;
       }
+    }
+    // a morph interrupted by fast clicking must not leave windows stuck without transitions
+    document.querySelectorAll('.win.noanim').forEach(w => w.classList.remove('noanim'));
+    const proxyOf = Object.fromEntries(Object.entries(morphOut).map(([k, lk]) => [lk, k]));
+    const hidingForMorph = new Set(Object.values(morphIn));
+
+    const applyWin = (key, c) => {
+      const el = wins[key];
       const [x, y, w, h] = c.rect;
       Object.assign(el.style, { left: x + 'px', top: y + 'px', width: w + 'px', height: h + 'px' });
       el.classList.remove('hidden');
@@ -262,7 +269,7 @@
       world.style.transform = `translate(${t.tx}px,${t.ty}px) scale(${t.s / f})`;
       world.style.setProperty('--inv', (f / t.s).toFixed(3));
       const spot = el.querySelector('.spot'), dims = el.querySelector('.dimset');
-      if (c.spot) { placeSpot(spot, dims, c.spot, PAGES[key], WF(key)); }
+      if (c.spot) { placeSpot(spot, dims, c.spot, PAGES[key], f); }
       spot.classList.toggle('off', !c.spot);
       dims.classList.toggle('off', !c.spot);
       el.querySelectorAll('.marks').forEach(m => m.classList.toggle('on', m.dataset.g === c.marks));
@@ -275,7 +282,72 @@
         if (c.cycle) { let n = 0; setFrame(key, c.cycle[0]); cycleTimer = setInterval(() => setFrame(key, c.cycle[++n % c.cycle.length]), cfg.cycleMs || 2200); }
         else setFrame(key, c.frame || PAGES[key].defaultFrame);
       }
-      geo[key] = { rect: c.rect, t };
+      return t;
+    };
+    // put a thumbnail exactly where its big window is (same rect, camera and bands), without animating
+    const snapToBig = (lk, base) => {
+      const src = wins[base], el = wins[lk], t = lastT[base], f = WF(lk);
+      el.classList.add('noanim');
+      Object.assign(el.style, { left: src.style.left, top: src.style.top, width: src.style.width, height: src.style.height });
+      el.classList.remove('hidden');
+      el.classList.toggle('slim', src.classList.contains('slim'));
+      const world = el.querySelector('.world');
+      world.style.transform = `translate(${t.tx}px,${t.ty}px) scale(${t.s / f})`;
+      world.style.setProperty('--inv', (f / t.s).toFixed(3));
+      const sb = src.querySelector('.bands'), lb = el.querySelector('.bands');
+      if (sb && lb) {
+        lb.classList.toggle('on', sb.classList.contains('on'));
+        const onCats = new Set([...sb.querySelectorAll('.band.on')].map(b => b.dataset.c));
+        lb.querySelectorAll('.band').forEach(b => b.classList.toggle('on', onCats.has(b.dataset.c)));
+      }
+      void el.offsetWidth; // commit the start state
+      el.classList.remove('noanim');
+    };
+
+    const geo = {};
+    for (const key of Object.keys(PAGES)) {
+      const el = wins[key];
+      const c = proxyOf[key] ? stepWins[proxyOf[key]] : stepWins[key];
+      if (!c) {
+        if (hidingForMorph.has(key)) el.classList.add('noanim'); // vanish in the same frame the thumbnail appears
+        el.classList.add('hidden');
+        el.querySelector('.spot').classList.add('off');
+        el.querySelector('.dimset').classList.add('off');
+        el.querySelectorAll('.marks').forEach(m => m.classList.remove('on'));
+        continue;
+      }
+      if (morphIn[key]) snapToBig(key, morphIn[key]);
+      if (morphOut[key]) {
+        // the big window jumps to its target while hidden; the thumbnail does the visible motion
+        el.classList.add('noanim');
+        geo[key] = { rect: c.rect, t: applyWin(key, c) };
+        el.classList.add('hidden');
+        continue;
+      }
+      const t = applyWin(key, c);
+      if (!proxyOf[key]) geo[key] = { rect: c.rect, t };
+    }
+    if (hidingForMorph.size) setTimeout(() => hidingForMorph.forEach(k => wins[k].classList.remove('noanim')), 60);
+    if (Object.keys(morphOut).length) {
+      const dur = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--dur')) || 1.1) * 1000;
+      // hand each big window back once its thumbnail has really arrived (the motion may start late on a busy frame);
+      // the fallback timer only covers a transitionend that never fires (e.g. no movement at all)
+      for (const [k, lk] of Object.entries(morphOut)) {
+        const proxy = wins[lk];
+        let done = false, fallback = 0;
+        const handOver = () => {
+          if (done) return; done = true;
+          proxy.removeEventListener('transitionend', onEnd); clearTimeout(fallback);
+          if (my !== token) return;
+          wins[k].classList.remove('hidden');   // still noanim: appears in place, already rastered
+          proxy.classList.add('noanim');
+          proxy.classList.add('hidden');
+          setTimeout(() => { wins[k].classList.remove('noanim'); proxy.classList.remove('noanim'); }, 60);
+        };
+        const onEnd = e => { if (e.target === proxy && e.propertyName === 'width') handOver(); };
+        proxy.addEventListener('transitionend', onEnd);
+        fallback = setTimeout(handOver, dur * 3);
+      }
     }
 
     // overlays hide immediately, reveal after the camera lands
@@ -342,7 +414,7 @@
         if (step.catHead) cathead.classList.add('show');
         if (step.chips) chips.classList.add('show');
       }, 40);
-    }, reduce || cut ? 0 : 950);
+    }, reduce ? 0 : 950);
   }
 
   function fitStage() {
