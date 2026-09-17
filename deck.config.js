@@ -189,7 +189,7 @@ window.DECK = {
       d.overview(3, SUBJECT, 'core', { active: ['Core experience'], thumb: thumb('core'),
         caption: { k: 'ACER AIS MOCKUP', h: 'Acer 的核心體驗', p: '夾在情境與機型之間，只講一個概念。' } }),
       d.zoom(3, SUBJECT, 'core', { thumb: thumb('core'), message: 'qubi', callout: { k: 'ACER AIS · CORE EXPERIENCE', h: '用 Qubi 把<br>核心概念具像化', tag: '概念具像化',
-        items: [[1, '<strong>Qubi is Anywhere</strong>：跨裝置、同一個個人助理'], [2, '<strong>角色化的視覺</strong>，讓 AI 從功能變成夥伴'], [0, '放在情境與機型之間，<strong>串起前後段落</strong>']] } }),
+        items: [[1, '<strong>Qubi/Qubi claw is Anywhere</strong>：跨裝置、同一個數位員工'], [2, '<strong>角色化的視覺</strong>，讓 AI 從功能變成夥伴'], [0, '放在情境與機型之間，<strong>串起前後段落</strong>']] } }),
       d.versus(3, [REF, 'core'], [SUBJECT, 'core'], `<h3>從「一組功能」到「<em>一個看得見的夥伴</em>」</h3>` +
         versusTable([['呈現方式', '助理＋安全分段說明', '單一角色 Qubi'], ['用戶要記住的', '多個功能名稱', '一個核心概念'], ['在頁面中的角色', '功能補充', '串連情境與硬體']])),
 

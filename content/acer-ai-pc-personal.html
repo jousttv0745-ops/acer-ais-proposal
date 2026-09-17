@@ -67,10 +67,10 @@
   .card p.desc{margin:0;font-size:14px;color:var(--muted);line-height:1.75}
 
   /* ---------- Qubi (image 1440×625) ---------- */
-  .qubi{padding:0;aspect-ratio:1440/625;background:#ecf0f3}
-  /* Qubi → Qubi Claw video (1408×624): pushed right so the final Claw stays clear of the copy; left edge fades into the scene colour */
+  .qubi{padding:0;aspect-ratio:1440/625;background:#eef6e8}
+  /* green artwork (old Qubi removed) + the Qubi Claw jump cut out of its video, drawn by qubi-claw.js */
   .qubi .media{position:absolute;inset:0}
-  .qubi video{position:absolute;left:26.39cqw;top:0;width:97.78cqw;height:auto;-webkit-mask-image:linear-gradient(to right,transparent,#000 14cqw);mask-image:linear-gradient(to right,transparent,#000 14cqw)}
+  .qubi .media img,.qubi .media canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
   .qubi .k{left:6.875cqw;top:14.16cqw;font-size:2.743cqw;font-weight:700;color:#47ae1c}
   .qubi h2.ov{left:6.785cqw;top:18.00cqw;font-size:4.306cqw;letter-spacing:-.0993cqw;font-weight:900;color:#111}
   .qubi .b{left:6.972cqw;top:24.67cqw;font-size:1.875cqw;letter-spacing:.0389cqw;line-height:3.084cqw;color:#5a5a60}
@@ -147,7 +147,7 @@
     /* Hero & Qubi: copy moves above the artwork so it stays readable */
     .hero,.qubi{aspect-ratio:auto;display:flex;flex-direction:column;container-type:normal}
     .hero > img{order:2;aspect-ratio:1440/703}
-    .qubi .media{position:relative;order:2;aspect-ratio:1440/625;container-type:inline-size;overflow:hidden}
+    .qubi .media{position:relative;order:2;aspect-ratio:1440/625;overflow:hidden}
     .hero h1,.hero .ov,.qubi .ov{position:static;white-space:normal;padding-inline:16px}
     .hero h1{font-size:36px;line-height:1.1;padding-top:28px}
     .hero .lead{font-size:17px;margin-top:10px}
@@ -234,25 +234,12 @@ DO <em>THAT?</em></h1>
 </section>
 
 <section class="qubi art">
-  <div class="media"><video src="images/qubi-claw.mp4" poster="images/qubi-claw-poster.jpg" muted playsinline preload="none" aria-label="Qubi 跳躍變身為 Qubi Claw 的動畫"></video></div>
+  <div class="media"><img src="images/qubi-bg.jpg" alt=""><canvas width="1440" height="625" role="img" aria-label="Qubi 向上跳起拿到龍蝦雙手，變身為 Qubi Claw"></canvas></div>
   <p class="ov k">Qubi/Qubi claw is Anywhere.</p>
   <h2 class="ov">屬於你的數位員工</h2>
   <p class="ov b">所有裝置皆能搭載，隨時與你流暢對話，聰明理解問題、<br>自動安排你的專屬工作流程。</p>
 </section>
-<script>
-  // Qubi → Qubi Claw plays once and holds its last frame. On its own the page plays on load;
-  // inside the proposal deck it waits until the deck says the camera has landed on this banner.
-  (() => {
-    const v = document.querySelector('.qubi video');
-    const play = () => { v.preload = 'auto'; v.currentTime = 0; v.play().catch(() => {}); };
-    if (window.parent === window) play();
-    addEventListener('message', e => {
-      if (e.source !== window.parent || e.data?.deck !== 'qubi') return;
-      if (e.data.at === 'start') { v.pause(); if (v.readyState) v.currentTime = 0; } // back to Qubi while the camera moves in
-      else play();
-    });
-  })();
-</script>
+<script src="qubi-claw.js"></script>
 
 <section class="compare" id="compare">
   <div class="wrap">
