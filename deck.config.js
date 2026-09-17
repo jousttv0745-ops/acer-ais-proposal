@@ -80,7 +80,7 @@ window.DECK = {
         branding: [[42, 178, 412, 232], [460, 168, 980, 490], [42, 560, 412, 58]],
         scenario: [[470, 1002, 500, 64], [136, 1086, 1168, 340], [136, 1430, 1168, 92]],
         scenario2: [[470, 1002, 500, 64], [136, 1086, 1168, 436]], // page 23: two points, cards + their titles in one box
-        core: [[90, 1785, 720, 262], [980, 1790, 300, 370]],
+        core: [[90, 1785, 720, 262], [815, 1840, 610, 360]],
         details: [[500, 2408, 440, 58], [136, 2480, 1168, 506], [570, 2490, 204, 486]],
         selling: [[136, 3256, 384, 412], [528, 3256, 776, 412], [136, 3744, 1168, 81]],
       },
@@ -118,7 +118,7 @@ window.DECK = {
    *   d.lengths(chapter, pageKeys, { metric, label })
    *   d.panel(chapter, top, html)
    *   d.overview(chapter, page, region, { active: [bandNames], caption: {k,h,p}, thumb: {page, region} })
-   *   d.zoom(chapter, page, region, { callout: {k,h,items:[[n, html]],tag}, thumb, marks: false|group, cycle: [frames], frame })
+   *   d.zoom(chapter, page, region, { callout: {k,h,items:[[n, html]],tag}, thumb, marks: false|group, cycle: [frames], frame, message })
    *   d.versus(chapter, [pageA, regionA], [pageB, regionB], html)
    *   d.table(head, rows, cols)   d.pct(page, category)
    */
@@ -188,7 +188,7 @@ window.DECK = {
         items: [[1, '<strong>Bixby 助理</strong>段落：文字說明'], [2, '搭配<strong>手機介面</strong>示意對話'], [3, '<strong>資料安全</strong>另起一段：Knox 盾牌主視覺＋三段說明']] } }),
       d.overview(3, SUBJECT, 'core', { active: ['Core experience'], thumb: thumb('core'),
         caption: { k: 'ACER AIS MOCKUP', h: 'Acer 的核心體驗', p: '夾在情境與機型之間，只講一個概念。' } }),
-      d.zoom(3, SUBJECT, 'core', { thumb: thumb('core'), callout: { k: 'ACER AIS · CORE EXPERIENCE', h: '用 Qubi 把<br>核心概念具像化', tag: '概念具像化',
+      d.zoom(3, SUBJECT, 'core', { thumb: thumb('core'), message: 'qubi', callout: { k: 'ACER AIS · CORE EXPERIENCE', h: '用 Qubi 把<br>核心概念具像化', tag: '概念具像化',
         items: [[1, '<strong>Qubi is Anywhere</strong>：跨裝置、同一個個人助理'], [2, '<strong>角色化的視覺</strong>，讓 AI 從功能變成夥伴'], [0, '放在情境與機型之間，<strong>串起前後段落</strong>']] } }),
       d.versus(3, [REF, 'core'], [SUBJECT, 'core'], `<h3>從「一組功能」到「<em>一個看得見的夥伴</em>」</h3>` +
         versusTable([['呈現方式', '助理＋安全分段說明', '單一角色 Qubi'], ['用戶要記住的', '多個功能名稱', '一個核心概念'], ['在頁面中的角色', '功能補充', '串連情境與硬體']])),

@@ -99,7 +99,7 @@
       const r = region(key, name), withThumb = !!o.thumb;
       return { chapter,
         wins: { [key]: { rect: withThumb ? L.subjectFocus : L.focus, focus: r.focus, spot: r.spot,
-          marks: o.marks === false ? null : (o.marks || name), cycle: o.cycle, frame: o.frame }, ...thumbWin(o.thumb) },
+          marks: o.marks === false ? null : (o.marks || name), cycle: o.cycle, frame: o.frame, message: o.message }, ...thumbWin(o.thumb) },
         callout: o.callout && { page: key, spot: r.spot, box: o.callout.box || (withThumb ? L.calloutThumb : L.calloutFocus), ...o.callout } };
     },
     /** two pages side by side + a panel underneath */
@@ -255,6 +255,13 @@
     document.querySelectorAll('.win.noanim').forEach(w => w.classList.remove('noanim'));
     const proxyOf = Object.fromEntries(Object.entries(morphOut).map(([k, lk]) => [lk, k]));
     const hidingForMorph = new Set(Object.values(morphIn));
+    // a window taking over another one's exact rect (e.g. an annotated copy of the same shot) swaps in place, no fly-in
+    const swapIn = new Set(), swapOut = new Set();
+    for (const k of Object.keys(stepWins)) {
+      if (prevWins[k] || proxyOf[k] || morphIn[k]) continue;
+      const old = Object.keys(prevWins).find(p => !stepWins[p] && String(prevWins[p].rect) === String(stepWins[k].rect));
+      if (old) { swapIn.add(k); swapOut.add(old); }
+    }
 
     const applyWin = (key, c) => {
       const el = wins[key];
@@ -309,7 +316,7 @@
       const el = wins[key];
       const c = proxyOf[key] ? stepWins[proxyOf[key]] : stepWins[key];
       if (!c) {
-        if (hidingForMorph.has(key)) el.classList.add('noanim'); // vanish in the same frame the thumbnail appears
+        if (hidingForMorph.has(key) || swapOut.has(key)) el.classList.add('noanim'); // vanish in the same frame the replacement appears
         el.classList.add('hidden');
         el.querySelector('.spot').classList.add('off');
         el.querySelector('.dimset').classList.add('off');
@@ -324,10 +331,12 @@
         el.classList.add('hidden');
         continue;
       }
+      if (swapIn.has(key)) el.classList.add('noanim');
       const t = applyWin(key, c);
       if (!proxyOf[key]) geo[key] = { rect: c.rect, t };
     }
     if (hidingForMorph.size) setTimeout(() => hidingForMorph.forEach(k => wins[k].classList.remove('noanim')), 60);
+    if (swapIn.size) setTimeout(() => [...swapIn, ...swapOut].forEach(k => wins[k].classList.remove('noanim')), 60);
     if (Object.keys(morphOut).length) {
       const dur = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--dur')) || 1.1) * 1000;
       // hand each big window back once its thumbnail has really arrived (the motion may start late on a busy frame);
@@ -354,8 +363,12 @@
     const labels = $('#labels'), wire = $('#wire'), caption = $('#caption'), callout = $('#callout'), panel = $('#panel'), cathead = $('#cathead'), chips = $('#chips');
     [labels, wire, caption, callout, panel, cathead, chips].forEach(el => el.classList.remove('show'));
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // steps with `message` notify their embedded pages: { deck: message, at: 'start' | 'land' }
+    const post = at => { for (const [k, c] of Object.entries(stepWins)) if (c.message) wins[k].querySelectorAll('iframe.on').forEach(fr => fr.contentWindow?.postMessage({ deck: c.message, at }, '*')); };
+    post('start');
     setTimeout(() => {
       if (my !== token) return;
+      post('land'); // the camera has landed: embedded pages can start their animation
       let paths = '';
       labels.innerHTML = '';
       if (step.labels) {
