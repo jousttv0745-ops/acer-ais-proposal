@@ -182,7 +182,7 @@ window.DECK = {
         versusTable([['情境切分', '使用情境', '使用情境'], ['畫面', '真實需求場景＋介面特寫', '真實需求場景＋介面特寫'], ['接下來', '回到功能說明', '連到「哪一台跑得動」']])),
 
       // ===== 03 Core experience =====
-      d.intro(3, { num: '03', title: 'Core experience', sub: '核心體驗', p: '<q>讓貫穿所有 AI solution 的核心概念具像化，而非需要重新解釋的功能集合。</q>' }),
+      d.intro(3, { num: '03', title: 'Core experience', sub: '核心體驗', p: '<q>讓貫穿所有 AI solution 的核心概念具象化，而非需要重新解釋的功能集合。</q>' }),
       d.overview(3, REF, 'core', { active: ['Core experience'], caption: { k: 'SAMSUNG GALAXY AI', h: 'Samsung 的核心體驗', p: '情境之後，分段介紹助理與資料安全。' } }),
       d.zoom(3, REF, 'core', { callout: { k: 'SAMSUNG · CORE EXPERIENCE', h: '助理與安全，<br>各自獨立說明', tag: '功能集合',
         items: [[1, '<strong>Bixby 助理</strong>段落：文字說明'], [2, '搭配<strong>手機介面</strong>示意對話'], [3, '<strong>資料安全</strong>另起一段：Knox 盾牌主視覺＋三段說明']] } }),
@@ -214,7 +214,7 @@ window.DECK = {
       d.panel(5, 230,
         `<p class="quote">我們把「AI 能做什麼」<br>翻譯成「<em>哪一台做得到</em>」、「<em>找到你的搭檔</em>」。</p>` +
         `<p class="qa" style="margin:34px 0 0;font-size:26px">把硬體賣點藏進功能表裡講，無論用戶有哪一種需求都有 CTA。</p>` +
-        `<div class="recap"><span><b>01</b>提問式品牌露出</span><span><b>02</b>需求導向的情境</span><span><b>03</b>具像化的核心體驗</span><span><b>04</b>功能 × 機型導購</span></div>`),
+        `<div class="recap"><span><b>01</b>提問式品牌露出</span><span><b>02</b>需求導向的情境</span><span><b>03</b>具象化的核心體驗</span><span><b>04</b>功能 × 機型導購</span></div>`),
     ];
   },
 };
