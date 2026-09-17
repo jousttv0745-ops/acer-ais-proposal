@@ -394,12 +394,12 @@
         chips.innerHTML = Object.keys(geo).map(key => {
           const { rect } = geo[key], page = PAGES[key], cx = rect[0] + rect[2] / 2, top = rect[1] + rect[3] + 18;
           if (step.chips.mode === 'length') {
-            return `<div class="chip" style="left:${cx}px;top:${top}px">${page.label}<br><b>${d.px(page.h)}</b> px<small>${step.chips.label} ${d.pct(key, step.chips.metric)}%</small></div>`;
+            return `<div class="chip" style="left:${cx}px;top:${top}px"><span class="who">${page.label}</span><b>${d.px(page.h)}</b> px<small>${step.chips.label} ${d.pct(key, step.chips.metric)}%</small></div>`;
           }
           const segs = page.cats?.[step.chips.cat];
-          if (!segs) return `<div class="chip none" style="left:${cx}px;top:${top}px">${cfg.meta?.noneLabel || '無此區塊'}</div>`;
+          if (!segs) return `<div class="chip none" style="left:${cx}px;top:${top}px"><span class="who">${page.label}</span>${cfg.meta?.noneLabel || '無此區塊'}</div>`;
           const total = segs.reduce((a, [, h]) => a + h, 0);
-          return `<div class="chip" style="left:${cx}px;top:${top}px"><b>${d.px(total)}</b> px<small>占整頁 ${Math.round(total / page.h * 100)}%</small></div>`;
+          return `<div class="chip" style="left:${cx}px;top:${top}px"><span class="who">${page.label}</span><b>${d.px(total)}</b> px<small>占整頁 ${Math.round(total / page.h * 100)}%</small></div>`;
         }).join('');
       }
       wire.innerHTML = paths;

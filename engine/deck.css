@@ -105,6 +105,8 @@ html,body{margin:0;height:100%;background:#f3f4f6;color:var(--ink);font-family:"
 .chip b{font:800 26px Montserrat,sans-serif;color:var(--ink)}
 .chip small{display:block;font-size:17px;color:var(--muted);margin-top:2px}
 .chip.none{color:var(--faint)}
+/* which brand this column is: sits above the numbers */
+.chip .who{display:block;margin-bottom:4px;font:800 24px Montserrat,"Noto Sans TC",sans-serif;color:var(--ink)}
 
 /* section labels beside an overview */
 .labels{position:absolute;inset:0;z-index:9;pointer-events:none}
@@ -162,6 +164,10 @@ svg.wire.show circle{opacity:1}
 .recap span{padding:12px 22px;border-radius:14px;border:1px solid var(--line);font-size:22px;color:var(--ink-2)}
 .recap span b{font:800 18px Montserrat,sans-serif;color:var(--green-d);margin-right:10px}
 .note{margin-top:22px;font-size:17px;color:var(--faint)}
+/* conclusion line under a comparison panel */
+.conclude{margin:44px 0 0;padding:6px 0 6px 28px;border-left:6px solid var(--green);font-size:34px;font-weight:900;line-height:1.5;color:var(--ink)}
+.conclude em{font-style:normal;color:var(--green-d)}
+.conclude b{display:block;font-size:26px;font-weight:800;color:var(--green-d)}
 
 /* bottom */
 .bottom{position:absolute;left:80px;right:80px;bottom:40px;display:flex;align-items:center;gap:30px;z-index:30}
