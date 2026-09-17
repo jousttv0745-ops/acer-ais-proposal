@@ -170,7 +170,7 @@ window.DECK = {
         items: [[1, '主題性明確，抓住<strong>一個真實需求</strong>'], [2, '畫面極具沉浸感，讓人想像<strong>「日常能輕鬆一點」</strong>'], [3, '功能呈現清楚、介面選擇<strong>最適體驗</strong>']] } }),
       d.zoom(2, 'samsungLayout', 'full', { marks: false, cycle: ['two', 'three'],
         callout: { k: 'SAMSUNG · LAYOUT', h: '從 Samsung 看見的<br>圖文排版', tag: '排版細節',
-          items: [[1, '圖片視覺占比 <strong>35–37%</strong>，一屏就能看完主角'], [2, '圖片皆有約 <strong>3% 的輕量圓角</strong>，畫面乾淨'], [3, '圖片<strong>間距寬度一致</strong>，視覺舒適']] } }),
+          items: [[1, '圖片視覺占比 <strong>35–47%</strong>，一屏就能看完主角'], [2, '圖片皆有約 <strong>3% 的輕量圓角</strong>，畫面乾淨'], [3, '圖片<strong>間距寬度一致</strong>，視覺舒適']] } }),
       d.overview(2, SUBJECT, 'scenario', { active: ['Scenario'], thumb: thumb('scenario'),
         caption: { k: 'ACER AIS MOCKUP', h: 'Acer 的情境段落', p: '同樣接在品牌露出之後，但分頁的切法不同。' } }),
       d.zoom(2, SUBJECT, 'scenario', { thumb: thumb('scenario'), marks: 'scenario2', callout: { k: 'ACER AIS · SCENARIO', h: '以使用者的一天<br>切分情境', tag: '需求導向',
