@@ -121,7 +121,7 @@ window.DECK = {
         chips: [['00', 'Benchmark'], ['01', 'Branding'], ['02', 'Scenario'], ['03', 'Core experience'], ['04', 'Product details · Selling']] }),
 
       // ===== 00 Benchmark =====
-      d.intro(0, { num: '00', title: 'Benchmark for design framework', sub: 'Samsung Galaxy AI x Lenovo AI x ASUS StoryCube',
+      d.intro(0, { num: '00', title: 'Benchmark for web framework', sub: 'Samsung Galaxy AI x Lenovo AI x ASUS StoryCube',
         p: '<strong>Q：用戶來 Acer 官網的目的通常是什麼？</strong><br>A：想探索新設備或高擴充性需求；已購買設備，想了解設備技術細節。' }),
       ...d.categories(0, BENCH),
       d.lengths(0, BENCH, { metric: 'hardware', label: '硬體導購' }),
@@ -151,17 +151,17 @@ window.DECK = {
       // ===== 02 Scenario =====
       d.intro(2, { num: '02', title: 'Scenario', sub: '使用情境', p: '<q>從用戶的真實需求場景出發，而非功能取向，更能帶動用戶往下閱讀，並代入消費意願。</q>' }),
       d.overview(2, REF, 'scenario', { active: ['Scenario'], caption: { k: 'SAMSUNG GALAXY AI', h: 'Samsung 的情境段落', p: '緊接在品牌露出之後，用分頁切換不同功能。' } }),
-      d.zoom(2, REF, 'scenario', { callout: { k: 'SAMSUNG · SCENARIO', h: '以使用情境<br>區分', tag: '功能分類',
+      d.zoom(2, REF, 'scenario', { callout: { k: 'SAMSUNG · SCENARIO', h: '以使用情境<br>區分', tag: '需求導向',
         items: [[1, '大標以<strong>提問</strong>帶入'], [2, '分頁以<strong>使用情境</strong>區分'], [3, '每張卡都是<strong>真實需求場景＋介面特寫</strong>']] } }),
       d.zoom(2, REF, 'scenario', { marks: false, callout: { k: 'SCENE REFERENCE · SAMSUNG', h: '從 Samsung 看見的<br>場景設計語言', tag: '場景設計 tips',
-        items: [[1, '主題性明確，抓住生活中的<strong>一個真實需求</strong>'], [2, '畫面極具沉浸感，讓人想像<strong>「日常能輕鬆一點」</strong>'], [3, '功能呈現清楚、介面選擇<strong>最適體驗</strong>']] } }),
+        items: [[1, '主題性明確，抓住<strong>一個真實需求</strong>'], [2, '畫面極具沉浸感，讓人想像<strong>「日常能輕鬆一點」</strong>'], [3, '功能呈現清楚、介面選擇<strong>最適體驗</strong>']] } }),
       d.overview(2, SUBJECT, 'scenario', { active: ['Scenario'], thumb: thumb('scenario'),
         caption: { k: 'ACER AIS MOCKUP', h: 'Acer 的情境段落', p: '同樣接在品牌露出之後，但分頁的切法不同。' } }),
       d.zoom(2, SUBJECT, 'scenario', { thumb: thumb('scenario'), marks: 'scenario2', callout: { k: 'ACER AIS · SCENARIO', h: '以使用者的一天<br>切分情境', tag: '需求導向',
         items: [[1, '分頁以<strong>使用情境</strong>區分'], [2, '每張卡都是<strong>真實需求場景＋介面特寫</strong>']] } }),
       d.zoom(2, SUBJECT, 'scenario', { thumb: thumb('scenario'), marks: false, cycle: ['personal', 'business', 'creative', 'gaming'],
         callout: { k: 'SCENE DESIGN', h: '四種情境，<br>同一套場景語言', tag: '圖文組合的場景感',
-          items: [[1, '主題性明確，抓住生活中的<strong>一個真實需求</strong>'], [2, '畫面極具沉浸感，讓人想像<strong>「日常能輕鬆一點」</strong>'], [3, '功能呈現清楚、介面選擇<strong>最適體驗</strong>']] } }),
+          items: [[1, '主題性明確，抓住<strong>一個真實需求</strong>'], [2, '畫面極具沉浸感，讓人想像<strong>「日常能輕鬆一點」</strong>'], [3, '功能呈現清楚、介面選擇<strong>最適體驗</strong>']] } }),
       d.versus(2, [REF, 'scenario'], [SUBJECT, 'scenario'], `<h3>從「功能能做什麼」到「<em>我的一天用得到什麼</em>」</h3>` +
         versusTable([['情境切分', '使用情境', '使用情境'], ['畫面', '真實需求場景＋介面特寫', '真實需求場景＋介面特寫'], ['接下來', '回到功能說明', '連到「哪一台跑得動」']])),
 
