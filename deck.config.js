@@ -57,9 +57,9 @@ window.DECK = {
       label: 'ASUS StoryCube', url: 'asus.com/proart/storycube',
       cats: { brand: [[160, 1690]], feature: [[1850, 12630]], frame: [[0, 160], [14480, 1393]] },
     },
-    // Samsung scenario block redrawn at a 1440×900 viewport, 2-card tab then 3-card tab (annotated)
+    // the samsung screenshot's scenario block (page y 1720–3020), 2-card tab and 3-card tab, annotated
     samsungLayout: {
-      kind: 'frames', w: 1440, h: 900, label: 'Samsung Galaxy AI', url: 'samsung.com/us/galaxy-ai · 1440×900',
+      kind: 'frames', w: 1920, h: 1300, label: 'Samsung Galaxy AI', url: 'samsung.com/us/galaxy-ai',
       defaultFrame: 'two',
       frames: {
         two: { src: 'content/samsung-scenario/layout.html?n=2', label: '2 張版' },
@@ -96,7 +96,7 @@ window.DECK = {
       selling: { spot: [0, 5040, 1920, 3420], focus: [0, 5000, 1920, 3500] },
     },
     samsungLayout: {
-      full: { spot: [0, 0, 1440, 900], focus: [0, 0, 1440, 900] },
+      full: { spot: [0, 20, 1920, 1250], focus: [0, 0, 1920, 1300] }, // = samsung.scenario shifted by -1720
     },
     acer: {
       branding: { spot: [0, 109, 1440, 696], focus: [0, 60, 1440, 760] },
@@ -118,7 +118,7 @@ window.DECK = {
    *   d.lengths(chapter, pageKeys, { metric, label })
    *   d.panel(chapter, top, html)
    *   d.overview(chapter, page, region, { active: [bandNames], caption: {k,h,p}, thumb: {page, region} })
-   *   d.zoom(chapter, page, region, { callout: {k,h,items:[[n, html]],tag}, thumb, marks: false|group, cycle: [frames], once, cycleMs, frame })
+   *   d.zoom(chapter, page, region, { callout: {k,h,items:[[n, html]],tag}, thumb, marks: false|group, cycle: [frames], frame })
    *   d.versus(chapter, [pageA, regionA], [pageB, regionB], html)
    *   d.table(head, rows, cols)   d.pct(page, category)
    */
@@ -168,8 +168,8 @@ window.DECK = {
         items: [[1, '大標以<strong>提問</strong>帶入'], [2, '分頁以<strong>使用情境</strong>區分'], [3, '每張卡都是<strong>真實需求場景＋介面特寫</strong>']] } }),
       d.zoom(2, REF, 'scenario', { marks: false, callout: { k: 'SCENE REFERENCE · SAMSUNG', h: '從 Samsung 看見的<br>場景設計語言', tag: '場景設計 tips',
         items: [[1, '主題性明確，抓住<strong>一個真實需求</strong>'], [2, '畫面極具沉浸感，讓人想像<strong>「日常能輕鬆一點」</strong>'], [3, '功能呈現清楚、介面選擇<strong>最適體驗</strong>']] } }),
-      d.zoom(2, 'samsungLayout', 'full', { marks: false, cycle: ['two', 'three'], once: true, cycleMs: 3000,
-        callout: { k: 'SAMSUNG · LAYOUT', h: 'Samsung 如何做到<br>乾淨、沉浸的日常感', tag: '1440×900 實測',
+      d.zoom(2, 'samsungLayout', 'full', { marks: false, cycle: ['two', 'three'],
+        callout: { k: 'SAMSUNG · LAYOUT', h: '從 Samsung 看見的<br>圖文排版', tag: '排版細節',
           items: [[1, '圖片視覺占比 <strong>35–37%</strong>，一屏就能看完主角'], [2, '圖片皆有約 <strong>3% 的輕量圓角</strong>，畫面乾淨'], [3, '圖片<strong>間距寬度一致</strong>，視覺舒適']] } }),
       d.overview(2, SUBJECT, 'scenario', { active: ['Scenario'], thumb: thumb('scenario'),
         caption: { k: 'ACER AIS MOCKUP', h: 'Acer 的情境段落', p: '同樣接在品牌露出之後，但分頁的切法不同。' } }),

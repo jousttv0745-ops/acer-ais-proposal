@@ -4,71 +4,49 @@
 <meta charset="utf-8">
 <title>Samsung Galaxy AI · scenario layout</title>
 <style>
-  /* Samsung "Can your phone do that?" block at a 1440×900 viewport, top of the heading = 0.
-     Positions measured on samsung.com/us/galaxy-ai. ?n=2 (Personalization) or ?n=3 (Communication). */
-  html,body{margin:0;width:1440px;height:900px;overflow:hidden;background:#fff;font-family:Arial,"Helvetica Neue",sans-serif;color:#000}
+  /* The deck's Samsung screenshot around "Can your phone do that?" (page y 1720–3020, 1280px CSS viewport at 1.5×),
+     with annotations. ?n=2 = the screenshot as is (Personalization), ?n=3 = the Communication tab captured the same way.
+     Coordinates are image pixels; px labels are CSS px (image px ÷ 1.5). */
+  html,body{margin:0;width:1920px;height:1300px;overflow:hidden;background:#fff}
   .abs{position:absolute}
-  h2{left:0;top:0;width:1425px;margin:0;text-align:center;font:700 60px/75px Arial,sans-serif;letter-spacing:-1px}
-  .bar{height:12px;border-radius:6px;background:#e5e7eb}
-  .tabs{left:0;top:188px;width:1425px;display:flex;justify-content:center;gap:48px;font:700 18px/26px Arial,sans-serif}
-  .tabs .on{box-shadow:inset 0 -2px #000}
-  .card img{position:absolute;top:258px}
-  .eyebrow{font:700 14px/19px Arial,sans-serif;text-align:center}
-  .title{font:700 28px/37px Arial,sans-serif;text-align:center}
-  /* annotations */
-  .mask{top:258px;background:rgba(131,184,26,.30)}
-  .ratio{width:170px;height:170px;border-radius:50%;background:#5f8f10;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 0 8px rgba(255,255,255,.75)}
-  .ratio b{font:800 38px/1 Arial,sans-serif}
-  .ratio span{margin-top:8px;font:700 20px/1 Arial,sans-serif}
-  .ring{width:64px;height:64px;border-radius:50%;border:6px solid #5f8f10;box-shadow:0 0 0 3px #fff}
-  .pill{padding:8px 16px;border-radius:999px;background:#5f8f10;color:#fff;font:800 22px/1 Arial,sans-serif;white-space:nowrap;box-shadow:0 0 0 3px #fff}
-  .gap{height:0;border-top:4px solid #5f8f10}
-  .gap::before,.gap::after{content:"";position:absolute;top:-16px;width:4px;height:28px;background:#5f8f10}
+  .shot{left:0;top:0;width:1920px;height:1300px}
+  .mask{background:rgba(131,184,26,.32)}
+  .ratio{width:250px;height:250px;border-radius:50%;background:#5f8f10;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 0 12px rgba(255,255,255,.8);font-family:Montserrat,Arial,sans-serif}
+  .ratio b{font:800 56px/1 Montserrat,Arial,sans-serif}
+  .ratio span{margin-top:12px;font:700 28px/1 Montserrat,Arial,sans-serif}
+  .ring{width:96px;height:96px;border-radius:50%;border:9px solid #5f8f10;box-shadow:0 0 0 4px #fff}
+  .pill{padding:12px 24px;border-radius:999px;background:#5f8f10;color:#fff;font:800 32px/1 "Noto Sans TC",Arial,sans-serif;white-space:nowrap;box-shadow:0 0 0 4px #fff}
+  .gap{height:0;border-top:6px solid #5f8f10}
+  .gap::before,.gap::after{content:"";position:absolute;top:-22px;width:6px;height:40px;background:#5f8f10}
   .gap::before{left:0}.gap::after{right:0}
 </style>
 </head>
 <body>
-<h2 class="abs">Can your phone do that?</h2>
-<i class="abs bar" style="left:212px;top:100px;width:1000px"></i>
-<i class="abs bar" style="left:462px;top:124px;width:500px"></i>
-<div class="abs tabs" id="tabs"></div>
-<div id="cards"></div>
+<div id="root"></div>
 <script>
   const three = new URLSearchParams(location.search).get('n') === '3';
+  const S = 1.5, TOP = 420;
   const L = three
-    ? { active: 'Communication', w: 451, h: 332, left: 12, gap: 24, text: 615, lines: 5, bodyW: 400, radius: 13,
-        cards: [['call_screening.jpg', 'Call Screening', 'Let AI handle unwanted calls for you'], ['transcript_assist.jpg', 'Transcript Assist', 'Turn long recordings into short summaries'], ['interpreter.jpg', 'Interpreter', "Don't let language be a barrier"]] }
-    : { active: 'Personalization', w: 570, h: 420, left: 71, gap: 143, text: 702, lines: 3, bodyW: 560, radius: 17,
-        cards: [['now_nudge.jpg', 'Now Nudge', 'A little nudge to your next action keeps you focused'], ['now_brief.jpg', 'Now Brief', 'Get personalized insights tailored to you']] };
+    ? { src: 'scene-3.jpg', xs: [15.8, 648.3, 1280.8], w: 600.9, h: 442.8 }
+    : { src: 'scene-2.jpg', xs: [46.9, 995.6], w: 855, h: 630 };
+  const css = v => Math.round(v / S);
+  const radius = L.w * 0.03;
 
-  document.getElementById('tabs').innerHTML = ['Personalization', 'Creativity', 'Communication', 'Productivity', 'Health']
-    .map(t => `<span${t === L.active ? ' class="on"' : ''}>${t}</span>`).join('');
+  let html = `<img class="abs shot" src="${L.src}" alt="">`;
+  html += L.xs.map(x => `<div class="abs mask" style="left:${x}px;top:${TOP}px;width:${L.w}px;height:${L.h}px;border-radius:${radius}px"></div>`).join('');
 
-  const col = L.w + L.gap;
-  let html = L.cards.map(([src, eyebrow, title], i) => {
-    const x = L.left + i * col, cx = x + L.w / 2;
-    const bars = Array.from({ length: L.lines }, (_, n) => {
-      const w = n === L.lines - 1 ? L.bodyW * 0.6 : L.bodyW;
-      return `<i class="abs bar" style="left:${cx - w / 2}px;top:${L.text + 132 + n * 21}px;width:${w}px;height:9px"></i>`;
-    }).join('');
-    return `<div class="card"><img src="${src}" alt="" style="left:${x}px;width:${L.w}px;height:${L.h}px">` +
-      `<div class="abs mask" style="left:${x}px;width:${L.w}px;height:${L.h}px;border-radius:${L.radius}px"></div>` +
-      `<div class="abs eyebrow" style="left:${cx - 230}px;top:${L.text}px;width:460px">${eyebrow}</div>` +
-      `<div class="abs title" style="left:${cx - 230}px;top:${L.text + 34}px;width:460px">${title}</div>${bars}</div>`;
-  }).join('');
-
-  // first card: ratio circle in the middle
-  const x0 = L.left, cy = 258 + L.h / 2;
-  html += `<div class="abs ratio" style="left:${x0 + L.w / 2 - 85}px;top:${cy - 85}px"><b>1.36 : 1</b><span>${L.w}×${L.h}</span></div>`;
-  // corner: top-right of the last card, so the ring never leaves the 1440px frame
-  const xr = L.left + (L.cards.length - 1) * col + L.w;
-  html += `<div class="abs ring" style="left:${xr - 38}px;top:${258 - 26}px"></div>`;
-  html += `<div class="abs pill" style="right:${1440 - xr + 48}px;top:${258 + 26}px">圓角 ≈ 3%</div>`;
-  // spacing between card 1 and 2
-  const gx = x0 + L.w, gy = cy + 120;
-  html += `<div class="abs gap" style="left:${gx}px;top:${gy}px;width:${L.gap}px"></div>`;
-  html += `<div class="abs pill" style="left:${gx + L.gap / 2}px;top:${gy - 58}px;transform:translateX(-50%)">間距 ${L.gap}px</div>`;
-  document.getElementById('cards').innerHTML = html;
+  // first image: ratio + size
+  const x0 = L.xs[0], cy = TOP + L.h / 2;
+  html += `<div class="abs ratio" style="left:${x0 + L.w / 2 - 125}px;top:${cy - 125}px"><b>1.36 : 1</b><span>${css(L.w)}×${css(L.h)}</span></div>`;
+  // last image: corner
+  const xr = L.xs[L.xs.length - 1] + L.w;
+  html += `<div class="abs ring" style="left:${xr - 62}px;top:${TOP - 34}px"></div>`;
+  html += `<div class="abs pill" style="right:${1920 - xr + 70}px;top:${TOP + 34}px">圓角 ≈ 3%</div>`;
+  // spacing between image 1 and 2
+  const gx = x0 + L.w, gw = L.xs[1] - gx, gy = cy + 170;
+  html += `<div class="abs gap" style="left:${gx}px;top:${gy}px;width:${gw}px"></div>`;
+  html += `<div class="abs pill" style="left:${gx + gw / 2}px;top:${gy - 84}px;transform:translateX(-50%)">間距 ${css(gw)}px</div>`;
+  document.getElementById('root').innerHTML = html;
 </script>
 </body>
 </html>
