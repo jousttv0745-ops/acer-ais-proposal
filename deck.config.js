@@ -116,6 +116,29 @@ window.DECK = {
     const thumb = region => ({ page: REF, region });
     const versusTable = rows => d.table(['SAMSUNG', 'ACER AIS'], rows);
 
+    // Samsung scenario tab redrawn at 1440×900 (16:10), positions measured on samsung.com/us/galaxy-ai (px, top of heading = 0)
+    const S_IMG = 'content/samsung-scenario/';
+    const vpShot = ({ cards, active, imgW, imgH, gap, left, textTop, bodyLines, bodyW, label, share }) => {
+      const K = 0.585, colW = imgW + gap;
+      const tabs = ['Personalization', 'Creativity', 'Communication', 'Productivity', 'Health'];
+      const cardHtml = cards.map(([src, eyebrow, title], i) => {
+        const x = left + i * colW, cx = x + imgW / 2;
+        const bars = Array.from({ length: bodyLines }, (_, n) =>
+          `<i style="position:absolute;left:${cx - (n === bodyLines - 1 ? bodyW * 0.6 : bodyW) / 2}px;top:${textTop + 128 + n * 21}px;width:${n === bodyLines - 1 ? bodyW * 0.6 : bodyW}px;height:9px;border-radius:5px;background:#e5e7eb"></i>`).join('');
+        return `<img src="${S_IMG + src}" alt="" style="position:absolute;left:${x}px;top:258px;width:${imgW}px;height:${imgH}px">` +
+          (i === cards.length - 1 ? `<i style="position:absolute;left:${x + imgW - 50}px;top:228px;width:80px;height:80px;border:6px solid var(--green);border-radius:50%"></i>` : '') +
+          `<div style="position:absolute;left:${cx - 230}px;top:${textTop}px;width:460px;text-align:center;font:700 14px/19px sans-serif;color:#111">${eyebrow}</div>` +
+          `<div style="position:absolute;left:${cx - 230}px;top:${textTop + 34}px;width:460px;text-align:center;font:700 28px/37px sans-serif;color:#000">${title}</div>` + bars;
+      }).join('');
+      return `<figure style="margin:0"><div style="position:relative;width:${1440 * K}px;height:${900 * K}px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff">` +
+        `<div style="position:absolute;left:0;top:0;width:1440px;height:900px;transform:scale(${K});transform-origin:0 0">` +
+        `<div style="position:absolute;left:0;top:0;width:1440px;text-align:center;font:700 60px/75px sans-serif;color:#000">Can your phone do that?</div>` +
+        `<i style="position:absolute;left:220px;top:100px;width:1000px;height:12px;border-radius:6px;background:#e5e7eb"></i><i style="position:absolute;left:470px;top:124px;width:500px;height:12px;border-radius:6px;background:#e5e7eb"></i>` +
+        `<div style="position:absolute;left:0;top:188px;width:1440px;display:flex;justify-content:center;gap:48px;font:700 18px/26px sans-serif;color:#111">${tabs.map(t => `<span${t === active ? ' style="border-bottom:2px solid #000"' : ''}>${t}</span>`).join('')}</div>` +
+        cardHtml + `</div></div>` +
+        `<figcaption style="margin-top:14px;font-size:21px;color:var(--ink-2)">${label}<b style="float:right;color:var(--green-d);font-size:24px">圖片占畫面 ${share}</b></figcaption></figure>`;
+    };
+
     return [
       d.cover({ kicker: 'PROPOSAL · 2026.09', title: 'Acer Intelligence Space', subtitle: 'Landing Page Mockup Proposal',
         chips: [['00', 'Benchmark'], ['01', 'Branding'], ['02', 'Scenario'], ['03', 'Core experience'], ['04', 'Product details · Selling']] }),
@@ -155,6 +178,21 @@ window.DECK = {
         items: [[1, '大標以<strong>提問</strong>帶入'], [2, '分頁以<strong>使用情境</strong>區分'], [3, '每張卡都是<strong>真實需求場景＋介面特寫</strong>']] } }),
       d.zoom(2, REF, 'scenario', { marks: false, callout: { k: 'SCENE REFERENCE · SAMSUNG', h: '從 Samsung 看見的<br>場景設計語言', tag: '場景設計 tips',
         items: [[1, '主題性明確，抓住<strong>一個真實需求</strong>'], [2, '畫面極具沉浸感，讓人想像<strong>「日常能輕鬆一點」</strong>'], [3, '功能呈現清楚、介面選擇<strong>最適體驗</strong>']] } }),
+      d.panel(2, 110,
+        `<h3>Samsung 如何做到<em>乾淨、沉浸</em>的日常感</h3>` +
+        `<div style="display:flex;justify-content:space-between">` +
+        vpShot({ cards: [['now_nudge.jpg', 'Now Nudge', 'A little nudge to your next action keeps you focused'], ['now_brief.jpg', 'Now Brief', 'Get personalized insights tailored to you']],
+          active: 'Personalization', imgW: 570, imgH: 420, gap: 143, left: 71, textTop: 702, bodyLines: 3, bodyW: 560,
+          label: '2 張版 · 單張 570×420（1.36 : 1）', share: '37%' }) +
+        vpShot({ cards: [['call_screening.jpg', 'Call Screening', 'Let AI handle unwanted calls for you'], ['transcript_assist.jpg', 'Transcript Assist', 'Turn long recordings into short summaries'], ['interpreter.jpg', 'Interpreter', "Don't let language be a barrier"]],
+          active: 'Communication', imgW: 451, imgH: 332, gap: 24, left: 12, textTop: 615, bodyLines: 5, bodyW: 400,
+          label: '3 張版 · 單張 451×332（1.36 : 1）', share: '35%' }) +
+        `</div>` +
+        `<p class="note" style="margin-top:10px">以 16:10 筆電瀏覽器 1440×900 等比例重繪，數值實測自 samsung.com/us/galaxy-ai</p>` +
+        `<div style="display:flex;justify-content:space-between;gap:28px;margin-top:34px">` +
+        [['圖片視覺占比 <strong>35–37%</strong>，一屏就能看完主角'], ['圖片皆有約 <strong>3% 的輕量圓角</strong>，畫面乾淨'], ['圖片<strong>間距寬度一致</strong>，視覺舒適']]
+          .map(([t], i) => `<div style="display:flex;gap:16px;align-items:flex-start;font-size:28px;line-height:1.5;color:var(--ink-2)"><b style="flex:none;width:40px;height:40px;border-radius:50%;background:var(--green);color:#fff;font:800 20px/40px Montserrat,sans-serif;text-align:center">${i + 1}</b><span>${t}</span></div>`).join('') +
+        `</div>`),
       d.overview(2, SUBJECT, 'scenario', { active: ['Scenario'], thumb: thumb('scenario'),
         caption: { k: 'ACER AIS MOCKUP', h: 'Acer 的情境段落', p: '同樣接在品牌露出之後，但分頁的切法不同。' } }),
       d.zoom(2, SUBJECT, 'scenario', { thumb: thumb('scenario'), marks: 'scenario2', callout: { k: 'ACER AIS · SCENARIO', h: '以使用者的一天<br>切分情境', tag: '需求導向',
