@@ -99,7 +99,7 @@
       const r = region(key, name), withThumb = !!o.thumb;
       return { chapter,
         wins: { [key]: { rect: withThumb ? L.subjectFocus : L.focus, focus: r.focus, spot: r.spot,
-          marks: o.marks === false ? null : (o.marks || name), cycle: o.cycle, frame: o.frame }, ...thumbWin(o.thumb) },
+          marks: o.marks === false ? null : (o.marks || name), cycle: o.cycle, once: o.once, cycleMs: o.cycleMs, frame: o.frame }, ...thumbWin(o.thumb) },
         callout: o.callout && { page: key, spot: r.spot, box: o.callout.box || (withThumb ? L.calloutThumb : L.calloutFocus), ...o.callout } };
     },
     /** two pages side by side + a panel underneath */
@@ -279,7 +279,11 @@
         bands.querySelectorAll('.band').forEach(b => b.classList.toggle('on', c.bands === 'all' || b.dataset.c === c.bands));
       }
       if (PAGES[key].kind === 'frames') {
-        if (c.cycle) { let n = 0; setFrame(key, c.cycle[0]); cycleTimer = setInterval(() => setFrame(key, c.cycle[++n % c.cycle.length]), cfg.cycleMs || 2200); }
+        if (c.cycle) {
+          // once: stop on the last frame instead of looping
+          let n = 0; setFrame(key, c.cycle[0]);
+          cycleTimer = setInterval(() => { setFrame(key, c.cycle[++n % c.cycle.length]); if (c.once && n === c.cycle.length - 1) clearInterval(cycleTimer); }, c.cycleMs || cfg.cycleMs || 2200);
+        }
         else setFrame(key, c.frame || PAGES[key].defaultFrame);
       }
       return t;
