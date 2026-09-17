@@ -22,7 +22,9 @@
 
   // Qubi's feet: (947, 503) before the jump, (557, 582) after landing, 1.35× bigger → pin both to the banner spot
   const T1 = 1.25, T2 = 2.9, FROM = [947, 503], TO = [557, 582], GROW = 1.35;
-  const SCALE = 1.35, SPOT = [1195, 588]; // banner px (1440×625): the original Qubi's spot, nudged right so the lobster clears the copy
+  // banner px (1440×625): the original Qubi's spot, nudged right so the lobster clears the copy.
+  // Narrow screens crop the artwork to its middle behind the copy: Qubi stands just right of centre, lobster still in view.
+  const place = () => canvas.clientWidth && canvas.clientWidth < 600 ? { SCALE: 1.1, SPOT: [740, 605] } : { SCALE: 1.35, SPOT: [1195, 588] };
   const ease = t => { const u = Math.min(1, Math.max(0, (t - T1) / (T2 - T1))); return u * u * (3 - 2 * u); };
 
   function cutOut() {
@@ -82,6 +84,7 @@
     cutOut();
     const e = ease(t);
     const ax = FROM[0] + (TO[0] - FROM[0]) * e, ay = FROM[1] + (TO[1] - FROM[1]) * e;
+    const { SCALE, SPOT } = place();
     const s = SCALE / (1 + (GROW - 1) * e);
     out.setTransform(1, 0, 0, 1, 0, 0);
     out.clearRect(0, 0, canvas.width, canvas.height);

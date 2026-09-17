@@ -160,13 +160,15 @@
     .hero .lead{font-size:17px;margin-top:10px}
     .hero .cats{font-size:15px;padding-bottom:16px}
     .hero .down{display:none}
-    .qubi .k{font-size:18px;padding-top:32px}
-    .qubi h2.ov{font-size:28px}
-    .qubi .b{font-size:15px;line-height:1.7;padding-bottom:12px;letter-spacing:0}
+    .qubi .ov{position:relative;inset:auto;padding-inline:24px}
+    .qubi .k{font-size:16px;line-height:1.5;padding-top:40px}
+    .qubi h2.ov{inset:auto;font-size:26px;line-height:1.35;margin-top:6px}
+    .qubi .b{font-size:15px;line-height:1.85;margin-top:12px;letter-spacing:0;color:#5a5a60}
     .qubi .b br{display:none}
-    /* taller artwork, cropped to the right so Qubi stays a readable size */
-    .qubi .media{aspect-ratio:4/3}
-    .qubi .media img,.qubi .media canvas{object-position:88% 100%}
+    /* one continuous green panel: copy on top, Qubi standing under it (the jump rises behind the copy) */
+    .qubi{padding-bottom:200px}
+    .qubi .media{position:absolute;inset:0;aspect-ratio:auto}
+    .qubi .media img,.qubi .media canvas{object-position:50% 100%}
   }
   @media (max-width:600px){
     .cards3,.cards3.cols-2,.products .cards3{grid-template-columns:1fr;max-width:480px;margin-inline:auto}
