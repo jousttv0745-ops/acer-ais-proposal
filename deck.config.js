@@ -152,19 +152,19 @@ window.DECK = {
       // ===== 02 Scenario =====
       d.intro(2, { num: '02', title: 'Scenario', sub: '使用情境', p: '<q>從用戶的真實需求場景出發，而非功能取向，更能帶動用戶往下閱讀，並代入消費意願。</q>' }),
       d.overview(2, REF, 'scenario', { active: ['Scenario'], caption: { k: 'SAMSUNG GALAXY AI', h: 'Samsung 的情境段落', p: '緊接在品牌露出之後，用分頁切換不同功能。' } }),
-      d.zoom(2, REF, 'scenario', { callout: { k: 'SAMSUNG · SCENARIO', h: '以功能類別<br>切分情境', tag: '功能分類',
-        items: [[1, '大標 <strong>Can your phone do that?</strong> 用提問帶入'], [2, '分頁依<strong>功能類別</strong>：Personalization、Creativity、Communication…'], [3, '每張卡是<strong>功能＋生活照</strong>，還沒連到可以買哪一台']] } }),
-      d.zoom(2, REF, 'scenario', { callout: { k: 'SCENE REFERENCE · SAMSUNG', h: '從 Samsung 看見的<br>場景設計語言', tag: '場景設計 tips',
+      d.zoom(2, REF, 'scenario', { callout: { k: 'SAMSUNG · SCENARIO', h: '以使用情境<br>區分', tag: '功能分類',
+        items: [[1, '大標 <strong>Can your phone do that?</strong> 用提問帶入'], [2, '分頁依<strong>使用情境</strong>：Personalization、Creativity、Communication…'], [3, '每張卡是<strong>真實需求場景＋介面特寫</strong>，還沒連到可以買哪一台']] } }),
+      d.zoom(2, REF, 'scenario', { marks: false, callout: { k: 'SCENE REFERENCE · SAMSUNG', h: '從 Samsung 看見的<br>場景設計語言', tag: '場景設計 tips',
         items: [[1, '抓住生活中的<strong>一個真實需求</strong>，有清楚的功能與介面焦點'], [2, '經過安排的日常攝影，讓人想像<strong>「日常可以更輕鬆一點」</strong>'], [3, '場景使用<strong>自然光、畫面不雜亂</strong>，呈現舒適的生活感受']] } }),
       d.overview(2, SUBJECT, 'scenario', { active: ['Scenario'], thumb: thumb('scenario'),
         caption: { k: 'ACER AIS MOCKUP', h: 'Acer 的情境段落', p: '同樣接在品牌露出之後，但分頁的切法不同。' } }),
       d.zoom(2, SUBJECT, 'scenario', { thumb: thumb('scenario'), callout: { k: 'ACER AIS · SCENARIO', h: '以使用者的一天<br>切分情境', tag: '需求導向',
-        items: [[1, '分頁依<strong>使用身分</strong>：個人化、商務、創意、遊戲'], [2, '每張卡抓<strong>一個真實需求</strong>，畫面聚焦 AI 介面'], [3, '標題寫<strong>用戶得到什麼</strong>，說明寫怎麼做到']] } }),
+        items: [[1, '分頁依<strong>使用情境</strong>：個人化、商務、創意、遊戲'], [2, '每張卡抓<strong>一個真實需求</strong>，畫面聚焦 AI 介面'], [3, '標題寫<strong>用戶得到什麼</strong>，說明寫怎麼做到']] } }),
       d.zoom(2, SUBJECT, 'scenario', { thumb: thumb('scenario'), marks: false, cycle: ['personal', 'business', 'creative', 'gaming'],
         callout: { k: 'SCENE DESIGN', h: '四種情境，<br>同一套場景語言', tag: '圖文組合的場景感',
           items: [[1, '抓住生活中的<strong>一個真實需求</strong>，有清楚的功能與介面焦點'], [2, '經過安排的日常攝影，讓人想像<strong>「日常可以更輕鬆一點」</strong>'], [3, '場景使用<strong>自然光、畫面不雜亂</strong>，呈現舒適的生活感受']] } }),
       d.versus(2, [REF, 'scenario'], [SUBJECT, 'scenario'], `<h3>從「功能能做什麼」到「<em>我的一天用得到什麼</em>」</h3>` +
-        versusTable([['情境切分', '功能類別', '使用者身分'], ['畫面', '功能示意＋生活照', '真實需求場景＋AI 介面特寫'], ['接下來', '回到功能說明', '連到「哪一台跑得動」']])),
+        versusTable([['情境切分', '使用情境', '使用情境'], ['畫面', '真實需求場景＋介面特寫', '真實需求場景＋介面特寫'], ['接下來', '回到功能說明', '連到「哪一台跑得動」']])),
 
       // ===== 03 Core experience =====
       d.intro(3, { num: '03', title: 'Core experience', sub: '核心體驗', p: '<q>讓貫穿所有 AI solution 的核心概念具像化，而非需要重新解釋的功能集合。</q>' }),
