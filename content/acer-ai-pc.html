@@ -169,6 +169,8 @@
     .qubi{padding-bottom:200px}
     .qubi .media{position:absolute;inset:0;aspect-ratio:auto}
     .qubi .media img,.qubi .media canvas{object-position:50% 100%}
+    .qubi .ov{z-index:1}
+    .qubi .media canvas{z-index:2} /* Qubi jumps in front of the copy */
   }
   @media (max-width:600px){
     .cards3,.cards3.cols-2,.products .cards3{grid-template-columns:1fr;max-width:480px;margin-inline:auto}
